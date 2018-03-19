@@ -1,6 +1,7 @@
 // Initial implementation of using the libkeccak library
 
 #include <stdint.h>
+#include <time.h>
 #include <stdio.h>
 #include "KeccakHash.h"
 #include "KeccakSpongeWidth1600.h"
@@ -36,6 +37,13 @@ int main(int argc, char ** argv)
 		return 1;
 	}
 
+	// start timer
+    struct timespec start;
+    struct timespec stop;
+    struct timespec result;
+
+    clock_gettime(CLOCK_MONOTONIC, &start);
+
 	char * fileName = argv[1];
 
 	// Settings for sha3-512
@@ -65,6 +73,7 @@ int main(int argc, char ** argv)
     }
 
 	size_t read;
+	size_t totalRead = 0;
 	// Buffer for updating the hash
 	unsigned char buffer[bufferSize];
 	// Buffer for printing the hex encoded hash result off
@@ -76,6 +85,7 @@ int main(int argc, char ** argv)
 		if (read > 0)
 		{
 			Keccak_HashUpdate(&instance, buffer, read*8);
+			totalRead += read;
 		}
 	} while(read>0);
 
@@ -85,6 +95,20 @@ int main(int argc, char ** argv)
 	// Run the final hash
 	Keccak_HashFinal(&instance, buffer);
 
+	// Now stop the timer and calculate the total time elapsed and the hash rate
+    clock_gettime(CLOCK_MONOTONIC, &stop);
+    if ((stop.tv_nsec - start.tv_nsec) < 0) {
+        result.tv_sec = stop.tv_sec - start.tv_sec - 1;
+        result.tv_nsec = stop.tv_nsec - start.tv_nsec + 1000000000;
+    } else {
+        result.tv_sec = stop.tv_sec - start.tv_sec;
+        result.tv_nsec = stop.tv_nsec - start.tv_nsec;
+    }
+
+    double totalTime = result.tv_sec + (result.tv_nsec / 1000000000.0);
+    double totalReadMB = (totalRead / 1048576.0);
+	double hashRate = totalReadMB / totalTime;
+
 	// Encode the result as hex so it can be printed off
 	if (hexencode(buffer, (hashbitlen+7)/8, display, bufferSize*2)) {
         fprintf(stderr, "error: failed to convert to hex\n");
@@ -93,5 +117,6 @@ int main(int argc, char ** argv)
 
     // Print off the result
     printf("%s  %s\n", display, fileName);
+    printf("Calculated in %3f sec, %5.2f MBps\n", totalTime, hashRate);
 	return 0;
 }
