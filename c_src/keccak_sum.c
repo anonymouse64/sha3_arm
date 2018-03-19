@@ -81,7 +81,7 @@ int main(int argc, char ** argv)
 	fclose(fp);
 
 	// Now actually run the hash
-	int res = KeccakSHA3_512Hash(fileData, fileSize);
+	int res = KeccakSHA3_Hash(fileData, fileSize, LIBKECCAK_ALG_SHA3_512);
 	switch(res)
 	{
 		case LIBKECCAK_NO_ERROR:

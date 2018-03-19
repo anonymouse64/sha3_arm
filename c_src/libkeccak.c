@@ -12,27 +12,52 @@
 // Performs hashing of the specified data array
 // the output is written in place to the data array
 // up to length of 512
-int KeccakSHA3_512Hash(uint8_t * data, size_t dataSize)
+int KeccakSHA3_Hash(uint8_t * data, size_t dataSize, int type)
 {
-	// Settings for sha3-512
-	int rate = 576;
-	int capacity = 1024;
-	int hashbitlen = 512;
+	// Set the settings depending on the algorithm to use
+	int rate;
+	int capacity;
+	int hashbitlen;
+	switch(type) 
+	{
+		case LIBKECCAK_ALG_SHA3_512:
+			rate = 576;
+			capacity = 1024;
+			hashbitlen = 512;
+			break;
+		case LIBKECCAK_ALG_SHA3_384:
+			rate = 832;
+			capacity = 768;
+			hashbitlen = 384;
+			break;
+		case LIBKECCAK_ALG_SHA3_256:
+			rate = 1088;
+			capacity = 512;
+			hashbitlen = 256;
+			break;
+		case LIBKECCAK_ALG_SHA3_224:
+			rate = 1152;
+			capacity = 448;
+			hashbitlen = 224;
+			break;
+		default:
+			return LIBKECCAK_INVALID_ARGS;
+	}
 	// For FIPS202
 	int delimitedSuffix = 0x06;
 	Keccak_HashInstance instance;
 
-    // Setup the sponge
-    instance.fixedOutputLength = hashbitlen;
-    instance.delimitedSuffix = delimitedSuffix;
-    if(Keccak_HashInitialize(&instance,
-    	rate,
-    	capacity,
-    	hashbitlen,
-    	delimitedSuffix))
-    {
-    	return LIBKECCAK_INIT_ERROR;
-    }
+	// Setup the sponge
+	instance.fixedOutputLength = hashbitlen;
+	instance.delimitedSuffix = delimitedSuffix;
+	if(Keccak_HashInitialize(&instance,
+		rate,
+		capacity,
+		hashbitlen,
+		delimitedSuffix))
+	{
+		return LIBKECCAK_INIT_ERROR;
+	}
 
 	// Add the bytes to the sponge
 	if(Keccak_HashUpdate(&instance, data, dataSize*8))
