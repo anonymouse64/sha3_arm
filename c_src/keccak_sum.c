@@ -1,14 +1,14 @@
-// Initial implementation of using the libkeccak library
+// Example executable of using the libkeccak wrapper library
 
 #include <stdint.h>
 #include <time.h>
 #include <stdio.h>
-#include "KeccakHash.h"
-#include "KeccakSpongeWidth1600.h"
-#include "KeccakP-1600-SnP.h"
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <stdlib.h>
 
-// default chunk size
-#define bufferSize 65536
+#include "libkeccak.h"
 
 int hexencode(const void* data_buf, size_t dataLength, char* result, size_t resultSize)
 {
@@ -46,24 +46,6 @@ int main(int argc, char ** argv)
 
 	char * fileName = argv[1];
 
-	// Settings for sha3-512
-	int rate = 576;
-	int capacity = 1024;
-	int hashbitlen = 512;
-	int delimitedSuffix = 0x06;
-	Keccak_HashInstance instance;
-
-	// Setup the sponge
-	if(KeccakWidth1600_SpongeInitialize(&instance.sponge, rate, capacity))
-	{
-		fprintf(stderr, "error: invalid parameters to Keccak_HashInitialize\n");
-		return 1;
-	}
-
-    instance.fixedOutputLength = hashbitlen;
-    instance.delimitedSuffix = delimitedSuffix;
-
-
 	// Open the file for reading
 	FILE *fp;
 	fp = fopen(fileName, "rb");
@@ -72,28 +54,50 @@ int main(int argc, char ** argv)
         return 1;
     }
 
-	size_t read;
-	size_t totalRead = 0;
-	// Buffer for updating the hash
-	unsigned char buffer[bufferSize];
-	// Buffer for printing the hex encoded hash result off
-	char display[bufferSize*2+1];
+    // Get the total size of the file
+	struct stat st; 
+    if (stat(fileName, &st))
+    {
+    	fprintf(stderr, "error: file '%s' could not be stat'd for file size\n", fileName);
+        return 1;
+    }
+    size_t fileSize = st.st_size;
+    uint8_t * fileData = (uint8_t *) calloc(sizeof(uint8_t), fileSize);
+    if(!fileData)
+    {
+    	fprintf(stderr, "error: failed to allocate memory for reading file '%s'\n", fileName);
+    	return 1;
+    }
 
-	// Read all the bytes of the file in chunks of bufferSize and update the hash each time
-	do {
-		read = fread(buffer, 1, bufferSize, fp);
-		if (read > 0)
-		{
-			Keccak_HashUpdate(&instance, buffer, read*8);
-			totalRead += read;
-		}
-	} while(read>0);
+	size_t read = 0;
+	read = fread(fileData, 1, fileSize, fp);
+	if (read != fileSize)
+	{
+    	fprintf(stderr, "error: file '%s' could not be read\n", fileName);
+		return 1;
+	}
 
 	// Close the file
 	fclose(fp);
 
-	// Run the final hash
-	Keccak_HashFinal(&instance, buffer);
+	// Now actually run the hash
+	int res = KeccakSHA3_512Hash(fileData, fileSize);
+	switch(res)
+	{
+		case LIBKECCAK_NO_ERROR:
+			break;
+		case LIBKECCAK_INIT_ERROR:
+			fprintf(stderr, "error: failed to initialize sponge\n");
+			goto endfail;
+		case LIBKECCAK_HASH_UPDATE_ERROR:
+			fprintf(stderr, "error: failed to absorb bytes into the sponge\n");
+			goto endfail;
+		case LIBKECCAK_HASH_FINAL_ERROR:
+			fprintf(stderr, "error: failed to squeeze the sponge\n");
+		default:
+		endfail:
+			return 1;
+	}
 
 	// Now stop the timer and calculate the total time elapsed and the hash rate
     clock_gettime(CLOCK_MONOTONIC, &stop);
@@ -106,11 +110,13 @@ int main(int argc, char ** argv)
     }
 
     double totalTime = result.tv_sec + (result.tv_nsec / 1000000000.0);
-    double totalReadMB = (totalRead / 1048576.0);
-	double hashRate = totalReadMB / totalTime;
+	double hashRate =  (fileSize / 1048576.0) / totalTime;
+
+	// Buffer for printing the hex encoded hash result off
+	char display[512*2+1];
 
 	// Encode the result as hex so it can be printed off
-	if (hexencode(buffer, (hashbitlen+7)/8, display, bufferSize*2)) {
+	if (hexencode(fileData, (512+7)/8, display, fileSize)) {
         fprintf(stderr, "error: failed to convert to hex\n");
         return -1;
     }

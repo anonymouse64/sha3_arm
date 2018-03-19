@@ -29,5 +29,5 @@ else()
 	message(FATAL_ERROR "Libkeccak library location not specified")
 endif()
 
-add_subdirectory(src)
+add_subdirectory(c_src)
 
