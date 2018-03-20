@@ -86,7 +86,7 @@ func (h *Sha3FastHasher) Write(b []byte) (n int, err error) {
 	if h.lasthashedbytes != nil {
 		C.free(h.lasthashedbytes)
 	}
-	byteLen := _Ctype_ulong(len(b))
+	byteLen := C.size_t(len(b))
 	bytes := C.CBytes(b)
 	h.lasthashedbytes = bytes
 	res := C.Keccak_HashUpdate(
