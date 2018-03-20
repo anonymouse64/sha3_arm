@@ -1,6 +1,8 @@
 cmake_minimum_required (VERSION 3.5)
 project(GoKeccakSumLib)
 
+include("cmake/GoLangSimple.cmake")
+
 # find libkeccak - if not found add as target
 if(LIBKECCAK_LOCATION)
 	find_path (LIBKECCAK_HEADERS
@@ -29,5 +31,15 @@ else()
 	message(FATAL_ERROR "Libkeccak library location not specified")
 endif()
 
+# For the example executable + static library targets
 add_subdirectory(c_src)
 
+# For the cgo project add the build target for the sha3 executable
+ADD_GO_INSTALLABLE_PROGRAM(TARGET sha3
+							MAIN_SOURCE cmd/sha3/main.go
+							IMPORT_PATH github.com/anonymouse64/sha3_arm
+							# These are necessary so that we can link against the assembly code, which isn't position independent
+							BUILD_ENVIRONMENT CGO_CFLAGS_ALLOW="-no-pie" CGO_LDFLAGS_ALLOW="-no-pie"
+							# This is so that the cgo directives can use CMake variables to refer to where to find libkeccak, etc.
+							CONFIGURE_FILE
+	)
