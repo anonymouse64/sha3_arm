@@ -6,6 +6,22 @@ This library is a Golang wrapper for the libkeccak functions implemented here : 
 
 As this package is a Go wrapper around assembly, it uses cgo, and as such you must have a recent C compiler and CMake available. The first step is to build libkeccak (this is something that I intend to do automatically in CMake, but haven't implemented quite yet).
 
+To build libkeccak (on linux for example):
+```
+$ git clone https://github.com/gvanas/KeccakCodePackage.git
+$ cd KeccakCodePackage
+$ make asmX86-64/libkeccak.a
+```
+
+And then provide the path to the built version of libkeccak :
+```
+$ git clone https://github.com/anonymouse64/sha3_arm.git
+$ cd sha3_arm
+$ mkdir build && cd build
+$ cmake .. -DLIBKECCAK_LOCATION=/path/to/folder/
+$ make
+```
+
 ## Supported platforms
 
 ### Linux
