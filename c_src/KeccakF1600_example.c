@@ -21,14 +21,8 @@ int main(int argc, char ** argv)
 		state[i] = i;
 	}
 
-	printf("\tBEFORE\n");
-	for(int i = 0; i < 25; i++)
-	{
-		printf("state[%d] = %" PRIu64 "\n",i, state[i]);
-	}
-
 	KeccakF1600((void *) state);
-	printf("\tAFTER\n");
+
 	for(int i = 0; i < 25; i++)
 	{
 		printf("state[%d] = %" PRIu64 "\n",i, state[i]);
