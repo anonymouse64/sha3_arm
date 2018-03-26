@@ -226,14 +226,6 @@ KeccakP1600_Permute_RoundConstants12:
 .global   KeccakF1600
 .type	KeccakF1600, %function;
 KeccakF1600:
-    vmov.i64    q0, #0
-    vmov.i64    q1, #0
-    vmov.i64    q2, #0
-    vmov.i64    q3, #0
-    vstm        r0!, { d0 - d7 }
-    vstm        r0!, { d0 - d7 }
-    vstm        r0!, { d0 - d7 }
-    vstm        r0!, { d0 }
     adr     r1, KeccakP1600_Permute_RoundConstants24
     mov     r3, lr
     vpush   {q4-q7}
