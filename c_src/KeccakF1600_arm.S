@@ -296,7 +296,6 @@ KeccakF1600:
     KeccakRound
     KeccakRound
     KeccakRound
-    bx      lr
     @ store state
     vst1.64 d0, [r0:64]!
     vst1.64 d2, [r0:64]!
