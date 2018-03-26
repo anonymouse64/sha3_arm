@@ -1,7 +1,7 @@
 package sha3
 
-// #cgo CFLAGS: -fno-pie -no-pie -I/home/ijohnson/git/canonical/KeccakCodePackage/bin/asmX86-64/libkeccak.a.headers
-// #cgo LDFLAGS: -no-pie /home/ijohnson/git/canonical/KeccakCodePackage/bin/asmX86-64/libkeccak.a
+// #cgo CFLAGS: -fno-pie -no-pie -I${LIBKECCAK_HEADERS}
+// #cgo LDFLAGS: -no-pie ${LIBKECCAK_LIBRARY}
 // #include <stdlib.h>
 // #include "KeccakHash.h"
 // #include "KeccakSpongeWidth1600.h"
