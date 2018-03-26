@@ -188,25 +188,6 @@
     .endm
 
 
-@----------------------------------------------------------------------------
-@
-@ void KeccakP1600_Initialize(void *state)
-@
-.align 8
-.global   KeccakP1600_Initialize
-.type   KeccakP1600_Initialize, %function;
-KeccakP1600_Initialize:
-    vmov.i64    q0, #0
-    vmov.i64    q1, #0
-    vmov.i64    q2, #0
-    vmov.i64    q3, #0
-    vstm        r0!, { d0 - d7 }            @ clear 8 lanes at a time
-    vstm        r0!, { d0 - d7 }
-    vstm        r0!, { d0 - d7 }
-    vstm        r0!, { d0 }
-    bx          lr
-
-
 .align 8
 KeccakP1600_Permute_RoundConstants24:
         .quad      0x0000000000000001

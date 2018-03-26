@@ -13,12 +13,9 @@
 // state must be 1600 bits - i.e. 25 uint64_t's
 extern void KeccakF1600( void *state ); 
 
-extern void KeccakP1600_Initialize( void *state ); 
-
 int main(int argc, char ** argv)
 {
 	uint64_t state[25];
-	KeccakP1600_Initialize((void *)state);
 	for(int i = 0; i < 25; i++)
 	{
 		state[i] = i;
