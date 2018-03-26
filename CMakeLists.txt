@@ -44,11 +44,11 @@ ADD_GO_PACKAGE_FOLDER(TARGET sha3_pkg
 					BUILD_ENVIRONMENT CGO_CFLAGS_ALLOW="-no-pie" CGO_LDFLAGS_ALLOW="-no-pie" GOARM=7 GOOS=linux
 	)
 
-ADD_GO_PACKAGE_FOLDER(TARGET sha3-fast
-					MAIN_FOLDER sha3-fast
+ADD_GO_PACKAGE_FOLDER(TARGET sha3_fast
+					MAIN_FOLDER sha3_fast
 					IMPORT_PATH github.com/anonymouse64/sha3_arm
 					# This is so that the cgo directives can use CMake variables to refer to where to find libkeccak, etc.
-					CONFIGURE_FILES sha3-fast/keccakf_arm.go
+					CONFIGURE_FILES sha3_fast/keccakf_arm.go
 					# These are necessary so that we can link against the assembly code, which isn't position independent
 					BUILD_ENVIRONMENT CGO_CFLAGS_ALLOW="-no-pie" CGO_LDFLAGS_ALLOW="-no-pie" GOARM=7 GOOS=linux
 	)
