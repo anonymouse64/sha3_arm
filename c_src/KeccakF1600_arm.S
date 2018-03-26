@@ -227,9 +227,9 @@ KeccakP1600_Permute_RoundConstants12:
 .type	KeccakF1600, %function;
 KeccakF1600:
     adr     r1, KeccakP1600_Permute_RoundConstants24
-    mov     r3, lr
+    mov     r2, lr
     vpush   {q4-q7}
-    @ load state
+    @ load state - interleaving loads helps with pipelining
     vld1.64 d0, [r0:64]!
     vld1.64 d2, [r0:64]!
     vld1.64 d4, [r0:64]!
@@ -305,5 +305,5 @@ KeccakF1600:
     vst1.64 { d22, d23 }, [r0:128]!
     vst1.64 d24, [r0:64]
     vpop    {q4-q7}
-    bx      r3
+    bx      r2
 
