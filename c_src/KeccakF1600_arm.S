@@ -26,59 +26,6 @@
 
 @ macros
 
-.macro    LoadState
-    vld1.64 d0, [r0:64]!
-    vld1.64 d2, [r0:64]!
-    vld1.64 d4, [r0:64]!
-    vld1.64 d6, [r0:64]!
-    vld1.64 d8, [r0:64]!
-    vld1.64 d1, [r0:64]!
-    vld1.64 d3, [r0:64]!
-    vld1.64 d5, [r0:64]!
-    vld1.64 d7, [r0:64]!
-    vld1.64 d9, [r0:64]!
-    vld1.64 d10, [r0:64]!
-    vld1.64 d12, [r0:64]!
-    vld1.64 d14, [r0:64]!
-    vld1.64 d16, [r0:64]!
-    vld1.64 d18, [r0:64]!
-    vld1.64 d11, [r0:64]!
-    vld1.64 d13, [r0:64]!
-    vld1.64 d15, [r0:64]!
-    vld1.64 d17, [r0:64]!
-    vld1.64 d19, [r0:64]!
-    vld1.64 { d20, d21 }, [r0:128]!
-    vld1.64 { d22, d23 }, [r0:128]!
-    vld1.64 d24, [r0:64]
-    sub     r0, r0, #24*8
-    .endm
-
-.macro    StoreState
-    vst1.64 d0, [r0:64]!
-    vst1.64 d2, [r0:64]!
-    vst1.64 d4, [r0:64]!
-    vst1.64 d6, [r0:64]!
-    vst1.64 d8, [r0:64]!
-    vst1.64 d1, [r0:64]!
-    vst1.64 d3, [r0:64]!
-    vst1.64 d5, [r0:64]!
-    vst1.64 d7, [r0:64]!
-    vst1.64 d9, [r0:64]!
-    vst1.64 d10, [r0:64]!
-    vst1.64 d12, [r0:64]!
-    vst1.64 d14, [r0:64]!
-    vst1.64 d16, [r0:64]!
-    vst1.64 d18, [r0:64]!
-    vst1.64 d11, [r0:64]!
-    vst1.64 d13, [r0:64]!
-    vst1.64 d15, [r0:64]!
-    vst1.64 d17, [r0:64]!
-    vst1.64 d19, [r0:64]!
-    vst1.64 { d20, d21 }, [r0:128]!
-    vst1.64 { d22, d23 }, [r0:128]!
-    vst1.64 d24, [r0:64]
-    .endm
-
 .macro    RhoPi4      dst1, src1, rot1, dst2, src2, rot2, dst3, src3, rot3, dst4, src4, rot4
     .if (\rot1  &  7) != 0
     vshl.u64    \dst1, \src1, #\rot1
@@ -290,7 +237,31 @@ KeccakF1600:
     adr     r1, KeccakP1600_Permute_RoundConstants24
     mov     r3, lr
     vpush   {q4-q7}
-    LoadState
+    @ load state
+    vld1.64 d0, [r0:64]!
+    vld1.64 d2, [r0:64]!
+    vld1.64 d4, [r0:64]!
+    vld1.64 d6, [r0:64]!
+    vld1.64 d8, [r0:64]!
+    vld1.64 d1, [r0:64]!
+    vld1.64 d3, [r0:64]!
+    vld1.64 d5, [r0:64]!
+    vld1.64 d7, [r0:64]!
+    vld1.64 d9, [r0:64]!
+    vld1.64 d10, [r0:64]!
+    vld1.64 d12, [r0:64]!
+    vld1.64 d14, [r0:64]!
+    vld1.64 d16, [r0:64]!
+    vld1.64 d18, [r0:64]!
+    vld1.64 d11, [r0:64]!
+    vld1.64 d13, [r0:64]!
+    vld1.64 d15, [r0:64]!
+    vld1.64 d17, [r0:64]!
+    vld1.64 d19, [r0:64]!
+    vld1.64 { d20, d21 }, [r0:128]!
+    vld1.64 { d22, d23 }, [r0:128]!
+    vld1.64 d24, [r0:64]
+    sub     r0, r0, #24*8
     @ bl      KeccakP1600_PermuteAsmOnly
     KeccakRound
     KeccakRound
@@ -317,7 +288,30 @@ KeccakF1600:
     KeccakRound
     KeccakRound
     bx      lr
-    StoreState
+    @ store state
+    vst1.64 d0, [r0:64]!
+    vst1.64 d2, [r0:64]!
+    vst1.64 d4, [r0:64]!
+    vst1.64 d6, [r0:64]!
+    vst1.64 d8, [r0:64]!
+    vst1.64 d1, [r0:64]!
+    vst1.64 d3, [r0:64]!
+    vst1.64 d5, [r0:64]!
+    vst1.64 d7, [r0:64]!
+    vst1.64 d9, [r0:64]!
+    vst1.64 d10, [r0:64]!
+    vst1.64 d12, [r0:64]!
+    vst1.64 d14, [r0:64]!
+    vst1.64 d16, [r0:64]!
+    vst1.64 d18, [r0:64]!
+    vst1.64 d11, [r0:64]!
+    vst1.64 d13, [r0:64]!
+    vst1.64 d15, [r0:64]!
+    vst1.64 d17, [r0:64]!
+    vst1.64 d19, [r0:64]!
+    vst1.64 { d20, d21 }, [r0:128]!
+    vst1.64 { d22, d23 }, [r0:128]!
+    vst1.64 d24, [r0:64]
     vpop    {q4-q7}
     bx      r3
 
