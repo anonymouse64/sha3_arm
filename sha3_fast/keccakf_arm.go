@@ -19,7 +19,7 @@ var goarm uint8
 // If NEON is available, use the NEON implementation, otherwise fallback on
 // generic implementation
 func keccakF1600(a *[25]uint64) {
-	if goarm > 7 {
+	if goarm >= 7 {
 		C.KeccakF1600((*_Ctype_ulonglong)(&a[0]))
 	} else {
 		keccakF1600Generic(a)
