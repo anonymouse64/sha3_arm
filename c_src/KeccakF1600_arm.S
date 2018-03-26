@@ -221,7 +221,6 @@ KeccakP1600_Permute_RoundConstants24:
         .quad      0x0000000000000088
         .quad      0x0000000080008009
         .quad      0x000000008000000a
-KeccakP1600_Permute_RoundConstants12:
         .quad      0x000000008000808b
         .quad      0x800000000000008b
         .quad      0x8000000000008089
@@ -273,7 +272,6 @@ KeccakF1600:
     vld1.64 { d22, d23 }, [r0:128]!
     vld1.64 d24, [r0:64]
     sub     r0, r0, #24*8
-    @ bl      KeccakP1600_PermuteAsmOnly
     KeccakRound
     KeccakRound
     KeccakRound
