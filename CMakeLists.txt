@@ -51,4 +51,11 @@ ADD_GO_INSTALLABLE_PROGRAM(TARGET sha3
 							BUILD_ENVIRONMENT CGO_CFLAGS_ALLOW="-no-pie" CGO_LDFLAGS_ALLOW="-no-pie"
 	)
 
+# Make the sha3 executable depend on the package
 add_dependencies(sha3 sha3_pkg)
+
+# Add the keccak function example program for testing
+ADD_GO_INSTALLABLE_PROGRAM(TARGET keccakf1600_permute
+							MAIN_SOURCE cmd/keccakf1600_permute/main.go
+							IMPORT_PATH github.com/anonymouse64/sha3_arm
+	)
