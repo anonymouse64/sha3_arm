@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 3.5)
 project(GoKeccakSumLib)
 
-include("cmake/GoLangSimple.cmake")
+include("cmake/Golang.cmake")
 
 # find libkeccak - if not found add as target
 if(LIBKECCAK_LOCATION)
@@ -34,14 +34,6 @@ endif()
 # For the example executable + static library targets
 add_subdirectory(c_src)
 
-# For the cgo project add the build target for the sha3 executable
-ADD_GO_INSTALLABLE_PROGRAM(TARGET sha3
-							MAIN_SOURCE cmd/sha3/main.go
-							IMPORT_PATH github.com/anonymouse64/sha3_arm
-							# These are necessary so that we can link against the assembly code, which isn't position independent
-							BUILD_ENVIRONMENT CGO_CFLAGS_ALLOW="-no-pie" CGO_LDFLAGS_ALLOW="-no-pie"
-	)
-
 ADD_GO_PACKAGE_FOLDER(TARGET sha3_pkg
 					MAIN_FOLDER sha3
 					IMPORT_PATH github.com/anonymouse64/sha3_arm
@@ -50,3 +42,13 @@ ADD_GO_PACKAGE_FOLDER(TARGET sha3_pkg
 					# These are necessary so that we can link against the assembly code, which isn't position independent
 					BUILD_ENVIRONMENT CGO_CFLAGS_ALLOW="-no-pie" CGO_LDFLAGS_ALLOW="-no-pie"
 	)
+
+# For the cgo project add the build target for the sha3 executable
+ADD_GO_INSTALLABLE_PROGRAM(TARGET sha3
+							MAIN_SOURCE cmd/sha3/main.go
+							IMPORT_PATH github.com/anonymouse64/sha3_arm
+							# These are necessary so that we can link against the assembly code, which isn't position independent
+							BUILD_ENVIRONMENT CGO_CFLAGS_ALLOW="-no-pie" CGO_LDFLAGS_ALLOW="-no-pie"
+	)
+
+add_dependencies(sha3 sha3_pkg)
