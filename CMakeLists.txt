@@ -52,6 +52,7 @@ ADD_GO_PACKAGE_FOLDER(TARGET sha3_fast
 					# These are necessary so that we can link against the assembly code, which isn't position independent
 					BUILD_ENVIRONMENT CGO_CFLAGS_ALLOW="-no-pie" CGO_LDFLAGS_ALLOW="-no-pie" GOARM=7 GOOS=linux
 	)
+add_dependencies(sha3_fast keccakf1600)
 
 
 # For the cgo project add the build target for the sha3 executable
