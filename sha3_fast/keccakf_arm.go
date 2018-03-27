@@ -6,8 +6,9 @@
 
 package sha3_fast
 
-// #cgo CFLAGS: -fno-pie -no-pie -I/home/pi/git/sha3_arm/c_src/include
-// #cgo LDFLAGS: -no-pie /home/pi/git/sha3_arm/build/c_src/libkeccakf1600.a
+// /*This uses CMake generator expressions to use/link against the library that is built for the assembly, keccakf1600 */
+// #cgo CFLAGS: -fno-pie -no-pie -I$<TARGET_PROPERTY:keccakf1600,INCLUDE_DIRECTORIES>
+// #cgo LDFLAGS: -no-pie $<TARGET_FILE:keccakf1600>
 // #include <stdlib.h>
 // #include "KeccakF1600ARM.h"
 import "C"
