@@ -14,7 +14,7 @@ import (
 
 	// osutil "github.com/snapcore/snapd/osutil"
 	// _ "golang.org/x/crypto/sha3"
-	sha3 "github.com/anonymouse64/sha3_arm/sha3"
+	sha3 "github.com/anonymouse64/sha3_arm/sha3_fast"
 )
 
 const (
@@ -134,7 +134,7 @@ func main() {
 	var hashBytes []byte
 	var timeRes time.Duration
 	for i := 0; i < *numIters; i += 1 {
-		hasherToUse := sha3.NewKeccak512()
+		hasherToUse := sha3.New512()
 		hashBytes, timeRes = timeFileHash(hasherToUse, *fileStr)
 		timeResults[i] = timeRes
 	}
