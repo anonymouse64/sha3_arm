@@ -41,7 +41,7 @@ ADD_GO_PACKAGE_FOLDER(TARGET sha3_pkg
 					# This is so that the cgo directives can use CMake variables to refer to where to find libkeccak, etc.
 					CONFIGURE_FILES sha3/sha3.go
 					# These are necessary so that we can link against the assembly code, which isn't position independent
-					BUILD_ENVIRONMENT CGO_ENABLED=1 CC=${CMAKE_C_COMPILER} CGO_CFLAGS_ALLOW="-no-pie" CGO_LDFLAGS_ALLOW="-no-pie" GOARM=7 GOOS=linux GOARCH=arm
+					GO_ENVIRONMENT CGO_ENABLED=1 CC=${CMAKE_C_COMPILER} CGO_CFLAGS_ALLOW="-no-pie" CGO_LDFLAGS_ALLOW="-no-pie" GOARM=7 GOOS=linux GOARCH=arm
 	)
 
 ADD_GO_PACKAGE_FOLDER(TARGET sha3_fast
@@ -50,7 +50,7 @@ ADD_GO_PACKAGE_FOLDER(TARGET sha3_fast
 					# This is so that the cgo directives can use CMake variables to refer to where to find libkeccak, etc.
 					CONFIGURE_FILES sha3_fast/keccakf_arm.go
 					# These are necessary so that we can link against the assembly code, which isn't position independent
-					BUILD_ENVIRONMENT CGO_ENABLED=1 CC=${CMAKE_C_COMPILER} CGO_CFLAGS_ALLOW="-no-pie" CGO_LDFLAGS_ALLOW="-no-pie" GOARM=7 GOOS=linux GOARCH=arm
+					GO_ENVIRONMENT CGO_ENABLED=1 CC=${CMAKE_C_COMPILER} CGO_CFLAGS_ALLOW="-no-pie" CGO_LDFLAGS_ALLOW="-no-pie" GOARM=7 GOOS=linux GOARCH=arm
 	)
 add_dependencies(sha3_fast keccakf1600)
 
@@ -60,7 +60,7 @@ ADD_GO_INSTALLABLE_PROGRAM(TARGET sha3
 							MAIN_SOURCE cmd/sha3/main.go
 							IMPORT_PATH github.com/anonymouse64/sha3_arm
 							# These are necessary so that we can link against the assembly code, which isn't position independent
-							BUILD_ENVIRONMENT CGO_ENABLED=1 CC=${CMAKE_C_COMPILER} CGO_CFLAGS_ALLOW="-no-pie" CGO_LDFLAGS_ALLOW="-no-pie" GOARM=7 GOOS=linux GOARCH=arm
+							GO_ENVIRONMENT CGO_ENABLED=1 CC=${CMAKE_C_COMPILER} CGO_CFLAGS_ALLOW="-no-pie" CGO_LDFLAGS_ALLOW="-no-pie" GOARM=7 GOOS=linux GOARCH=arm
 	)
 
 add_dependencies(sha3 sha3_fast)
@@ -68,8 +68,9 @@ add_dependencies(sha3 sha3_fast)
 # Make the sha3 executable depend on the package
 add_dependencies(sha3 sha3_pkg)
 
-# # Add the keccak function example program for testing
-# ADD_GO_INSTALLABLE_PROGRAM(TARGET keccakf1600_permute
-# 							MAIN_SOURCE cmd/keccakf1600_permute/main.go
-# 							IMPORT_PATH github.com/anonymouse64/sha3_arm
-# 	)
+# Add the keccak function example program for testing
+ADD_GO_INSTALLABLE_PROGRAM(TARGET keccakf1600_permute
+							MAIN_SOURCE cmd/keccakf1600_permute/main.go
+							IMPORT_PATH github.com/anonymouse64/sha3_arm
+							GO_ENVIRONMENT CGO_ENABLED=1 CC=${CMAKE_C_COMPILER} CGO_CFLAGS_ALLOW="-no-pie" CGO_LDFLAGS_ALLOW="-no-pie" GOARM=7 GOOS=linux GOARCH=arm
+	)
