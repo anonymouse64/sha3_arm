@@ -207,44 +207,15 @@ KeccakP1600_Initialize:
     bx          lr
 
 
-.align 8
-KeccakP1600_Permute_RoundConstants24:
-        .quad      0x0000000000000001
-        .quad      0x0000000000008082
-        .quad      0x800000000000808a
-        .quad      0x8000000080008000
-        .quad      0x000000000000808b
-        .quad      0x0000000080000001
-        .quad      0x8000000080008081
-        .quad      0x8000000000008009
-        .quad      0x000000000000008a
-        .quad      0x0000000000000088
-        .quad      0x0000000080008009
-        .quad      0x000000008000000a
-        .quad      0x000000008000808b
-        .quad      0x800000000000008b
-        .quad      0x8000000000008089
-        .quad      0x8000000000008003
-        .quad      0x8000000000008002
-        .quad      0x8000000000000080
-        .quad      0x000000000000800a
-        .quad      0x800000008000000a
-        .quad      0x8000000080008081
-        .quad      0x8000000000008080
-        .quad      0x0000000080000001
-        .quad      0x8000000080008008
-
-
-
 @ ----------------------------------------------------------------------------
 @
-@  void KeccakF1600( void *state )
+@  void KeccakF1600( uint64_t state[25] , uint64_t constants[24] )
 @
 .align 8
 .global   KeccakF1600
 .type	KeccakF1600, %function;
 KeccakF1600:
-    adr     r1, KeccakP1600_Permute_RoundConstants24
+    @ r1 is taken as the start of the constants
     mov     r2, lr
     vpush   {q4-q7}
     @ load state - interleaving loads helps with pipelining
