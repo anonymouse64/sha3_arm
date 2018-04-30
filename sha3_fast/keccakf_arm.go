@@ -43,18 +43,18 @@ var constants = [24]uint64{
 }
 
 // this is a pool of bytes that is big enough to hold all of
-// the constants with enough available padding to align it on an 8-byte boundary
-var alignmentPool [24*8 + 8]byte
+// the constants with enough available padding to align it on an 16-byte boundary
+var alignmentPool [24*8 + 16]byte
 
 var constantAlignedPtr *[24]uint64
 
-// alignConstants takes the constants for keccak and aligns them on an 8-byte boundary
+// alignConstants takes the constants for keccak and aligns them on an 16-byte boundary
 // somewhere inside alignmentPool and assigns the start of the aligned constants
 // to constantAlignedPtr
 func alignConstants() {
 	initialAddr := (uintptr)(unsafe.Pointer(&constants))
 	// check if we are aligned properly already
-	if initialAddr%8 == 0 {
+	if initialAddr%128 == 0 {
 		// already aligned
 		constantAlignedPtr = &constants
 		return
@@ -62,8 +62,8 @@ func alignConstants() {
 
 	// We have to do some moving around
 	startOfAlignmentPool := (uintptr)(unsafe.Pointer(&alignmentPool))
-	startOfAlignedSegment := startOfAlignmentPool%8 + startOfAlignmentPool
-	if startOfAlignedSegment%8 != 0 {
+	startOfAlignedSegment := startOfAlignmentPool%128 + startOfAlignmentPool
+	if startOfAlignedSegment%128 != 0 {
 		panic("not aligned")
 	}
 
@@ -88,7 +88,7 @@ func keccakF1600(a *[25]uint64) {
 	fmt.Printf("address of constantAlignedPtr: %p\n", constantAlignedPtr)
 	fmt.Printf("%#v\n", *constantAlignedPtr)
 	if goarm >= 7 {
-		KeccakF1600(a, constantAlignedPtr)
+		KeccakF1600(constantAlignedPtr, a)
 	} else {
 		keccakF1600Generic(a)
 	}
