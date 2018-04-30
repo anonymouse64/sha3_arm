@@ -215,6 +215,7 @@ KeccakP1600_Initialize:
 .global   KeccakF1600
 .type	KeccakF1600, %function;
 KeccakF1600:
+    @ r0 is taken as the start of the state array
     @ r1 is taken as the start of the constants
     mov     r2, lr
     vpush   {q4-q7}
