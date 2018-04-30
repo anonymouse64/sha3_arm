@@ -4,14 +4,11 @@
 
 // +build arm,!appengine,!gccgo
 
+//go:generate asm2go -as arm-linux-gnueabihf-as -file keccak.arms -gofile keccakf_arm.go -out keccakf_arm.s -as-opts -march=armv7-a -as-opts -mfpu=neon-vfpv4
+
 package sha3_fast
 
-// /*This uses CMake generator expressions to use/link against the library that is built for the assembly, keccakf1600 */
-// #cgo CFLAGS: -fno-pie -no-pie -I$<TARGET_PROPERTY:keccakf1600,INCLUDE_DIRECTORIES>
-// #cgo LDFLAGS: -no-pie $<TARGET_FILE:keccakf1600>
-// #include <stdlib.h>
-// #include "KeccakF1600ARM.h"
-import "C"
+import _ "unsafe"
 
 // To detect what version of arm we are running on we need to get goarm from the runtime
 //go:linkname goarm runtime.goarm
@@ -44,11 +41,15 @@ var constants = [24]uint64{
 	0x8000000080008008,
 }
 
+//go:noescape
+// This function is implemented in keccakf_arm.s
+func KeccakF1600(state *[25]uint64, constants *[24]uint64)
+
 // If NEON is available, use the NEON implementation, otherwise fallback on
 // generic implementation
 func keccakF1600(a *[25]uint64) {
 	if goarm >= 7 {
-		C.KeccakF1600((*_Ctype_ulonglong)(&a[0]), (*_Ctype_ulonglong)(&constants[0]))
+		KeccakF1600(a, &constants)
 	} else {
 		keccakF1600Generic(a)
 	}
