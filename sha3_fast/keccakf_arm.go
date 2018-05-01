@@ -8,7 +8,7 @@
 
 package sha3_fast
 
-import "unsafe"
+import _ "unsafe"
 
 // To detect what version of arm we are running on we need to get goarm from the runtime
 //go:linkname goarm runtime.goarm
@@ -41,43 +41,6 @@ var constants = [24]uint64{
 	0x8000000080008008,
 }
 
-// this is a pool of bytes that is big enough to hold all of
-// the constants with enough available padding to align it on an 16-byte boundary
-var alignmentPool [24*8 + 16]byte
-
-// the pointer to the actual constant, which is in aligned memory
-var constantAlignedPtr *[24]uint64
-
-// alignConstants takes the constants for keccak and aligns them on an 16-byte boundary
-// somewhere inside alignmentPool and assigns the start of the aligned constants
-// to constantAlignedPtr
-func alignConstants() {
-	initialAddr := (uintptr)(unsafe.Pointer(&constants))
-	// check if we are aligned properly already
-	if initialAddr%16 == 0 {
-		// already aligned
-		constantAlignedPtr = &constants
-		return
-	}
-
-	// We have to do some moving around
-	startOfAlignmentPool := (uintptr)(unsafe.Pointer(&alignmentPool))
-	startOfAlignedSegment := startOfAlignmentPool%16 + startOfAlignmentPool
-	if startOfAlignedSegment%16 != 0 {
-		panic("not aligned")
-	}
-
-	// Cast the start of the aligned segment to an appropriate pointer
-	constantAlignedPtr = (*[24]uint64)(unsafe.Pointer(startOfAlignedSegment))
-
-	// Now copy the constants into the aligned array
-	copy((*constantAlignedPtr)[:], constants[:])
-}
-
-func init() {
-	//alignConstants()
-}
-
 //go:noescape
 // This function is implemented in keccakf_arm.s
 func KeccakF1600(state *[25]uint64, constants *[24]uint64)
@@ -86,7 +49,7 @@ func KeccakF1600(state *[25]uint64, constants *[24]uint64)
 // generic implementation
 func keccakF1600(a *[25]uint64) {
 	if goarm >= 7 {
-		KeccakF1600(a, constantAlignedPtr)
+		KeccakF1600(a, &constants)
 	} else {
 		keccakF1600Generic(a)
 	}
