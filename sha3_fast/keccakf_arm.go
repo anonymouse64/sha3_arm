@@ -4,7 +4,7 @@
 
 // +build arm,!appengine,!gccgo
 
-//go:generate asm2go -as arm-linux-gnueabihf-as -file asm_src/keccakf_arm.s -gofile keccakf_arm.go -out keccakf_arm.s -as-opts -march=armv7-a -as-opts -mfpu=neon-vfpv4
+//go:generate asm2go -as arm-linux-gnueabihf-as -file asm_src/keccakf2_arm.s -gofile keccakf_arm.go -out keccakf_arm.s -as-opts -march=armv7-a -as-opts -mfpu=neon-vfpv4
 
 package sha3_fast
 
