@@ -4,7 +4,7 @@
 
 // +build arm,!appengine,!gccgo
 
-//go:generate asm2go -as arm-linux-gnueabihf-as -file keccak.arms -gofile keccakf_arm.go -out keccakf_arm.s -as-opts -march=armv7-a -as-opts -mfpu=neon-vfpv4
+//go:generate asm2go -as arm-linux-gnueabihf-as -file asm_src/keccakf_arm.s -gofile keccakf_arm.go -out keccakf_arm.s -as-opts -march=armv7-a -as-opts -mfpu=neon-vfpv4
 
 package sha3_fast
 
@@ -45,6 +45,7 @@ var constants = [24]uint64{
 // the constants with enough available padding to align it on an 16-byte boundary
 var alignmentPool [24*8 + 16]byte
 
+// the pointer to the actual constant, which is in aligned memory
 var constantAlignedPtr *[24]uint64
 
 // alignConstants takes the constants for keccak and aligns them on an 16-byte boundary
@@ -74,7 +75,7 @@ func alignConstants() {
 }
 
 func init() {
-	alignConstants()
+	//alignConstants()
 }
 
 //go:noescape
@@ -84,10 +85,6 @@ func KeccakF1600(state *[25]uint64, constants *[24]uint64)
 // If NEON is available, use the NEON implementation, otherwise fallback on
 // generic implementation
 func keccakF1600(a *[25]uint64) {
-	//fmt.Printf("address of constantAlignedPtr: %p\n", constantAlignedPtr)
-	//fmt.Printf("%#v\n", *constantAlignedPtr)
-	//fmt.Printf("address of a: %p\n",a)
-	//fmt.Printf("%#v\n", *a)
 	if goarm >= 7 {
 		KeccakF1600(a, constantAlignedPtr)
 	} else {
