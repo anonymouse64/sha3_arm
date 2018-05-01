@@ -191,7 +191,7 @@
 
 @ ----------------------------------------------------------------------------
 @
-@  void KeccakF1600( KeccakF1600 )
+@  void KeccakF1600( void *states, void *constants )
 @
 .align 8
 .global   KeccakF1600
