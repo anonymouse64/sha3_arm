@@ -1,0 +1,14 @@
+goos: linux
+goarch: arm
+BenchmarkPermutationFunction-4   	  100000	     19033 ns/op	  10.51 MB/s
+BenchmarkSha3_512_MTU-4          	    5000	    388484 ns/op	   3.48 MB/s
+BenchmarkSha3_384_MTU-4          	    5000	    279054 ns/op	   4.84 MB/s
+BenchmarkSha3_256_MTU-4          	   10000	    224595 ns/op	   6.01 MB/s
+BenchmarkSha3_224_MTU-4          	   10000	    210459 ns/op	   6.41 MB/s
+BenchmarkShake128_MTU-4          	   10000	    181445 ns/op	   7.44 MB/s
+BenchmarkShake256_MTU-4          	   10000	    199495 ns/op	   6.77 MB/s
+BenchmarkShake256_16x-4          	     500	   2704755 ns/op	   6.06 MB/s
+BenchmarkShake256_1MiB-4         	      10	 151870003 ns/op	   6.90 MB/s
+BenchmarkSha3_512_1MiB-4         	       5	 283838790 ns/op	   3.69 MB/s
+PASS
+ok  	_/home/ubuntu/git/sha3_arm/sha3_fast	19.655s

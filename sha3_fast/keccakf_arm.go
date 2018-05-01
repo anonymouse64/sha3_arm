@@ -9,7 +9,6 @@
 package sha3_fast
 
 import "unsafe"
-import "fmt"
 
 // To detect what version of arm we are running on we need to get goarm from the runtime
 //go:linkname goarm runtime.goarm
@@ -54,7 +53,7 @@ var constantAlignedPtr *[24]uint64
 func alignConstants() {
 	initialAddr := (uintptr)(unsafe.Pointer(&constants))
 	// check if we are aligned properly already
-	if initialAddr%128 == 0 {
+	if initialAddr%16 == 0 {
 		// already aligned
 		constantAlignedPtr = &constants
 		return
@@ -62,8 +61,8 @@ func alignConstants() {
 
 	// We have to do some moving around
 	startOfAlignmentPool := (uintptr)(unsafe.Pointer(&alignmentPool))
-	startOfAlignedSegment := startOfAlignmentPool%128 + startOfAlignmentPool
-	if startOfAlignedSegment%128 != 0 {
+	startOfAlignedSegment := startOfAlignmentPool%16 + startOfAlignmentPool
+	if startOfAlignedSegment%16 != 0 {
 		panic("not aligned")
 	}
 
@@ -85,10 +84,12 @@ func KeccakF1600(state *[25]uint64, constants *[24]uint64)
 // If NEON is available, use the NEON implementation, otherwise fallback on
 // generic implementation
 func keccakF1600(a *[25]uint64) {
-	fmt.Printf("address of constantAlignedPtr: %p\n", constantAlignedPtr)
-	fmt.Printf("%#v\n", *constantAlignedPtr)
+	//fmt.Printf("address of constantAlignedPtr: %p\n", constantAlignedPtr)
+	//fmt.Printf("%#v\n", *constantAlignedPtr)
+	//fmt.Printf("address of a: %p\n",a)
+	//fmt.Printf("%#v\n", *a)
 	if goarm >= 7 {
-		KeccakF1600(constantAlignedPtr, a)
+		KeccakF1600(a, constantAlignedPtr)
 	} else {
 		keccakF1600Generic(a)
 	}
