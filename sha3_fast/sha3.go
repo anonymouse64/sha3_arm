@@ -4,6 +4,8 @@
 
 package sha3_fast
 
+import "fmt"
+
 // spongeDirection indicates the direction bytes are flowing through the sponge.
 type spongeDirection int
 
@@ -19,6 +21,10 @@ const (
 	// currently needs the largest buffer.
 	maxRate = 168
 )
+
+func init() {
+	fmt.Println("hello from optimized SHA3 library")
+}
 
 type state struct {
 	// Generic sponge components.
